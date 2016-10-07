@@ -46,7 +46,3 @@ class Justify {
       .join('\n')
   }
 }
-
-console.log(new Justify('test me\nboy', 20).right)
-console.log(new Justify('test me\nboy', 20).left)
-console.log(new Justify('test me\nboy', 20).center)

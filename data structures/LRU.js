@@ -32,21 +32,23 @@ class LRU {
 
     // no space left
     if ((this.size + 1) > this.maxSize) {
-      this.pop
+      this.deleteTail()
       return this.put(newNode)
     }
 
     // space available
-    this.tail.next = newNode
-    newNode.prev = this.tail
-    this.tail = newNode
+    newNode.next = this.head
+    newNode.prev = undefined
+
+    this.head.prev = newNode
+    this.head = newNode
 
     this.keyMap[newNode.id] = newNode
     this.size++
     return newNode
   }
 
-  get pop() {
+  pop() {
     if(this.head === undefined)
       return
 
@@ -68,14 +70,13 @@ class LRU {
     if ( ! this.contains(id) )
       return
 
-    let newNode = this.keyMap[id]
-    newNode.prev = newNode.next = undefined
-
+    let newNode = new Node({id: id, value: this.keyMap[id].value})
     this.delete(id)
+
     return this.put(newNode)
   }
 
-  get getAll(){
+  getAll(){
     let accumulator = []
     let current = this.head
 
@@ -97,20 +98,23 @@ class LRU {
 
     //deleting from end
     if(this.tail.id === id)
-      return this.deleteTail
+      return this.deleteTail()
 
     //deleting from middle
     let deleted = this.keyMap[id]
-    deleted.prev = deleted.next
+    deleted.prev.next = deleted.next
+    deleted.next.prev = deleted.prev
+
     delete this.keyMap[id]
     this.size--
 
     return deleted
   }
 
-  get deleteTail(){
+  deleteTail() {
     let oldTail = this.tail
     let newTail = this.tail.prev
+
     newTail.next = undefined
     this.tail = newTail
 
@@ -119,15 +123,7 @@ class LRU {
     return oldTail
   }
 
-  get deleteAll() {
+  deleteAll() {
     this.init()
   }
 }
-
-lru = new LRU(4)
-lru.put(new Node({ id: 'B', value: 54 }))
-lru.put(new Node({ id: 'C', value: 56 }))
-lru.put(new Node({ id: 'D', value: 33 }))
-lru.put(new Node({ id: 'E', value: 44 }))
-lru.get('E')
-debugger
