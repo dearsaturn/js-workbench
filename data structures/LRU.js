@@ -126,4 +126,16 @@ class LRU {
   deleteAll() {
     this.init()
   }
+
+  map(fn) {
+    let current = this.head
+    let accumulator = []
+
+    while(current) {
+      accumulator.push(fn(current.value))
+      current = current.next
+    }
+
+    return accumulator
+  }
 }
